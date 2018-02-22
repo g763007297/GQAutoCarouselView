@@ -2,7 +2,7 @@ Pod::Spec.new do |s|
 
   s.name         = "GQAutoCarouselView"
   s.version      = "1.0.0"
-  s.summary      = "一款自动轮播视图，可以自定义可见item个数，支持自定义单个itemView，支持视图推出方向设置，"
+  s.summary      = "一款自动轮播视图，可以自定义可见item个数，支持自定义单个itemView，支持视图轮播方向设置"
 
   s.homepage     = "https://github.com/g763007297/GQAutoCarouselView"
 
