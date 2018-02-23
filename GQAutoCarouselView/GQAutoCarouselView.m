@@ -61,13 +61,10 @@
 
 - (void)layoutSubviews {
     [super layoutSubviews];
-    _scrollView.contentSize = CGSizeMake((_visibleNumber + 2) * [self configureCGPoint].x, (_visibleNumber + 2) * [self configureCGPoint].y);
-    _scrollView.contentOffset = [self configureCGPoint];
     [self configContentViews];
 }
 
 #pragma mark -- private method
-
 
 - (void)configureInformation {
     if (self.delegate && [self.delegate respondsToSelector:@selector(autoScrollViewDerection:)]) {
@@ -169,6 +166,9 @@
             [self.scrollView layoutIfNeeded];
         }];
     }
+    
+    _scrollView.contentSize = CGSizeMake((_visibleNumber + 2) * [self configureCGPoint].x, (_visibleNumber + 2) * [self configureCGPoint].y);
+    
     [_scrollView setContentOffset:point];
     
     if (_totalPageCount < _visibleNumber) {
