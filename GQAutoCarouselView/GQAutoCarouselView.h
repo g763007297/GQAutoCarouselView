@@ -11,7 +11,7 @@
 @class GQAutoCarouselView;
 
 typedef enum : NSUInteger {
-    GQAutoCarouselViewDirectionFormTop,//从上往下
+    GQAutoCarouselViewDirectionFormTop = 1,//从上往下
     GQAutoCarouselViewDirectionFormBottom,//从下往上
     GQAutoCarouselViewDirectionFormLeft,//从左往右
     GQAutoCarouselViewDirectionFormRight,//从右往左

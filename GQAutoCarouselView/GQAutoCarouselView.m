@@ -108,19 +108,18 @@
 }
 
 - (void)configureSubViews {
-    self.autoresizesSubviews = YES;
     _currentPageIndex = 0;
     [self addSubview:self.scrollView];
     
-    NSLayoutConstraint *top = [NSLayoutConstraint constraintWithItem:self.scrollView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1.0 constant:0];
+    NSLayoutConstraint *top = [NSLayoutConstraint constraintWithItem:self.scrollView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.scrollView.superview attribute:NSLayoutAttributeTop multiplier:1.0 constant:0];
     
-    NSLayoutConstraint *left = [NSLayoutConstraint constraintWithItem:self.scrollView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeft multiplier:1.0 constant:0];
+    NSLayoutConstraint *left = [NSLayoutConstraint constraintWithItem:self.scrollView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.scrollView.superview attribute:NSLayoutAttributeLeft multiplier:1.0 constant:0];
     
-    NSLayoutConstraint *bottom = [NSLayoutConstraint constraintWithItem:self.scrollView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeBottom multiplier:1.0 constant:0];
+    NSLayoutConstraint *bottom = [NSLayoutConstraint constraintWithItem:self.scrollView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self.scrollView.superview attribute:NSLayoutAttributeBottom multiplier:1.0 constant:0];
     
-    NSLayoutConstraint *right = [NSLayoutConstraint constraintWithItem:self.scrollView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeRight multiplier:1.0 constant:0];
+    NSLayoutConstraint *right = [NSLayoutConstraint constraintWithItem:self.scrollView attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.scrollView.superview attribute:NSLayoutAttributeRight multiplier:1.0 constant:0];
     
-    [self addConstraint:left];//约束添加到 stackview 的父级view，注意添加约束前要把对象添加父视图（stackview 需要add 到view 后 调用此代码）
+    [self addConstraint:left];
     [self addConstraint:right];
     [self addConstraint:top];
     [self addConstraint:bottom];
@@ -149,19 +148,19 @@
         [UIView animateWithDuration:0.2 animations:^{
             
             [contentView removeConstraints:contentView.constraints];
-            
+            contentView.translatesAutoresizingMaskIntoConstraints = NO;
             NSLayoutConstraint *top = [NSLayoutConstraint constraintWithItem:contentView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:contentView.superview attribute:NSLayoutAttributeTop multiplier:1.0 constant:point.y * i];
             
             NSLayoutConstraint *left = [NSLayoutConstraint constraintWithItem:contentView attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:contentView.superview attribute:NSLayoutAttributeLeft multiplier:1.0 constant:point.x * i];
             
             NSLayoutConstraint *width = [NSLayoutConstraint constraintWithItem:contentView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem: (point.x == 0 ? contentView.superview : nil ) attribute:NSLayoutAttributeWidth multiplier:1.0 constant: (point.x == 0 ?0 : point.x) ];
             
-            NSLayoutConstraint *height = [NSLayoutConstraint constraintWithItem:contentView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem: (point.x == 0 ? contentView.superview : nil ) attribute:NSLayoutAttributeHeight multiplier:1.0 constant: (point.y == 0 ?0 : point.y) ];
+            NSLayoutConstraint *height = [NSLayoutConstraint constraintWithItem:contentView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem: (point.y == 0 ? contentView.superview : nil ) attribute:NSLayoutAttributeHeight multiplier:1.0 constant: (point.y == 0 ?0 : point.y) ];
             
-            [contentView addConstraint:top];
-            [contentView addConstraint:left];
-            [contentView addConstraint:width];
-            [contentView addConstraint:height];
+            [self.scrollView addConstraint:top];
+            [self.scrollView addConstraint:left];
+            [self.scrollView addConstraint:width];
+            [self.scrollView addConstraint:height];
             
             [self.scrollView layoutIfNeeded];
         }];
@@ -187,18 +186,17 @@
         case GQAutoCarouselViewDirectionFormRight:
         {
             newOffset = CGPointMake(self.scrollView.contentOffset.x == 0 ? 0 : self.scrollView.contentOffset.x + self.itemWidth, self.scrollView.contentOffset.y == 0 ? 0 : self.scrollView.contentOffset.y + self.itemWidth);
-            _currentPageIndex = [self getValidNextPageIndexWithPageIndex:_currentPageIndex + 1];
             break;
         }
         case GQAutoCarouselViewDirectionFormLeft:
         case GQAutoCarouselViewDirectionFormTop:
         {
             newOffset = CGPointMake(self.scrollView.contentOffset.x == 0 ? 0 : self.scrollView.contentOffset.x - self.itemWidth, self.scrollView.contentOffset.y == 0 ? 0 : self.scrollView.contentOffset.y - self.itemWidth);
-            _currentPageIndex = [self getValidNextPageIndexWithPageIndex:_currentPageIndex - 1];
         }
         default:
             break;
     }
+    _currentPageIndex = [self getValidNextPageIndexWithPageIndex:_currentPageIndex + 1];
     
     [UIView animateWithDuration:0.25
                           delay:0
@@ -227,11 +225,10 @@
                 NSInteger index = _totalPageCount <= _visibleNumber ? _totalPageCount : _visibleNumber + 1;
                 
                 for (NSInteger i = 1; i <= index; i++) {
-                    NSInteger rearPageIndex = [self getValidNextPageIndexWithPageIndex:_currentPageIndex + i];
-                    NSInteger currentIndex = _totalPageCount < _visibleNumber ? i : [self getValidNextPageIndexWithPageIndex:i];
+                    NSInteger rearPageIndex = [self getValidNextPageIndexWithPageIndex:_currentPageIndex + i - 1];
                     
                     [array addObject:[self configureViewWithindex:rearPageIndex
-                                                      reusingView:[self reusingViewWithIndex:currentIndex]]];
+                                                      reusingView:[self reusingViewWithIndex:i]]];
                 }
             }
             
@@ -246,14 +243,13 @@
                                                    reusingView:[self reusingViewWithIndex:0]];
             if (reusingView) {
                 [array addObject:reusingView];
-                NSInteger index = _totalPageCount <= _visibleNumber ? _totalPageCount :_visibleNumber + 1;
+                NSInteger index = _totalPageCount <= _visibleNumber ? _totalPageCount + 1 :_visibleNumber + 1;
                 
-                for (NSInteger i = 0; i < index; i++) {
-                    NSInteger rearPageIndex = [self getValidNextPageIndexWithPageIndex:_currentPageIndex + i - 1];
-                    NSInteger currentIndex = _totalPageCount < _visibleNumber ? i + 1 : [self getValidNextPageIndexWithPageIndex:i + 1];
+                for (NSInteger i = index - 1; i >= 0; i--) {
+                    NSInteger rearPageIndex = [self getValidNextPageIndexWithPageIndex:_currentPageIndex + index - i - 1];
                     
                     [array addObject:[self configureViewWithindex:rearPageIndex
-                                                      reusingView:[self reusingViewWithIndex:currentIndex]]];
+                                                      reusingView:[self reusingViewWithIndex:i]]];
                 }
             }
             
@@ -302,7 +298,7 @@
 #pragma mark -- public method
 
 - (void)realoadData {
-    [self suspendTimer];
+    [self invalidTimer];
     
     [self configureInformation];
     
@@ -335,7 +331,7 @@
         _scrollView = [[UIScrollView alloc] initWithFrame:self.bounds];
         
         _scrollView.decelerationRate = UIScrollViewDecelerationRateFast;
-        _scrollView.autoresizingMask = 0xFF;
+        _scrollView.translatesAutoresizingMaskIntoConstraints = NO;
         _scrollView.contentMode = UIViewContentModeCenter;
         [_scrollView setShowsHorizontalScrollIndicator:NO];
         [_scrollView setShowsVerticalScrollIndicator:NO];
@@ -356,6 +352,7 @@
         _animationTimer = [GQTimer timerWithTimerStep:self.animationDuration repeats:YES withBlock:^(GQTimer *timer) {
             __strong __typeof(self) strongSelf = weakSelf;
             [strongSelf setupNextPage];
+            NSLog(@"%.f",timer.timeInterval);
         }];
         [_animationTimer resume];
     }
