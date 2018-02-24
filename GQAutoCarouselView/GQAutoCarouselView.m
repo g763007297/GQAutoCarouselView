@@ -77,6 +77,8 @@
     } else
         _visibleNumber = 1;
     
+    _scrollView.pagingEnabled = _visibleNumber == 1;
+    
     if (self.dataSource && [self.dataSource respondsToSelector:@selector(numberOfItemsInAutoScrollView:)]) {
         _totalPageCount = [self.dataSource numberOfItemsInAutoScrollView:self];
     } else
