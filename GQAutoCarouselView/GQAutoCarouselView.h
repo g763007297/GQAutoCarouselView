@@ -27,7 +27,7 @@ typedef enum : NSUInteger {
 
 @end
 
-@protocol GGQAutoCarouselViewDelegate <NSObject>
+@protocol GQAutoCarouselViewDelegate <NSObject>
 
 @optional
 - (void)autoScrollView:(GQAutoCarouselView * _Nonnull)autoCarouselView didSelectIndex:(NSInteger)index;
@@ -71,7 +71,7 @@ typedef enum : NSUInteger {
 
 @property (nonatomic, weak, nullable) id<GQAutoCarouselViewDataSource> dataSource;
 
-@property (nonatomic, weak, nullable) id<GGQAutoCarouselViewDelegate> delegate;
+@property (nonatomic, weak, nullable) id<GQAutoCarouselViewDelegate> delegate;
 
 /**
  刷新数据源

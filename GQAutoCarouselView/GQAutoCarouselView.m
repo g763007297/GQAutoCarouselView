@@ -260,7 +260,7 @@
         default:
             break;
     }
-    if (self.contentViews == nil) {
+    if (self.contentViews == nil || [self.contentViews count] <= _totalPageCount) {
         self.contentViews = [[NSMutableArray alloc] initWithArray:array];
     }
 }

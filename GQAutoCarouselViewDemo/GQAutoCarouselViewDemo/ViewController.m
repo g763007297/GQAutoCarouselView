@@ -13,7 +13,7 @@
 #define GQScreen_Height [UIScreen mainScreen].bounds.size.height
 #define GQScreen_Width [UIScreen mainScreen].bounds.size.width
 
-@interface ViewController ()<GQAutoCarouselViewDataSource,GGQAutoCarouselViewDelegate>
+@interface ViewController ()<GQAutoCarouselViewDataSource,GQAutoCarouselViewDelegate>
 
 @property (nonatomic, strong) GQAutoCarouselView *carouselView;
 
