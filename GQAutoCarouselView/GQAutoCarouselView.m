@@ -181,6 +181,9 @@
 
 //配置下一页
 - (void)setupNextPage {
+    if (_totalPageCount == 0) {
+        return;
+    }
     CGPoint newOffset = self.scrollView.contentOffset;
     
     switch (self.direction) {
@@ -213,6 +216,9 @@
 //根据source配置contenView
 - (void)setScrollViewContentDataSource
 {
+    if (_currentPageIndex >= _totalPageCount) {
+        return;
+    }
     NSMutableArray *array = [NSMutableArray new];
     
     switch (self.direction) {
