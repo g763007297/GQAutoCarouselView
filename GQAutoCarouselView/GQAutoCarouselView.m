@@ -15,6 +15,7 @@
     NSInteger _totalPageCount;
     NSInteger _visibleNumber;
     GQAutoCarouselViewDirection _direction;
+    BOOL _isReloading;
 }
 
 @property (nonatomic, assign) CGFloat itemWidth;
@@ -306,6 +307,8 @@
 #pragma mark -- public method
 
 - (void)realoadData {
+    _isReloading = YES;
+    
     [self invalidTimer];
     
     [self configureInformation];
@@ -315,6 +318,8 @@
     [self configContentViews];
     
     [self resumeTimer];
+    
+    _isReloading = NO;
 }
 
 /**暂停定时器*/
@@ -359,6 +364,9 @@
         __weak __typeof(self) weakSelf = self;
         _animationTimer = [GQTimer timerWithTimerStep:self.animationDuration repeats:YES withBlock:^(GQTimer *timer) {
             __strong __typeof(self) strongSelf = weakSelf;
+            if (strongSelf -> _isReloading) {
+                return;
+            }
             [strongSelf setupNextPage];
             NSLog(@"%.f",timer.timeInterval);
         }];
